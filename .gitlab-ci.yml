@@ -24,3 +24,4 @@ trivy-sca:
   script:
     - trivy fs --scanners vuln --severity CRITICAL,HIGH .
   allow_failure: true
+
