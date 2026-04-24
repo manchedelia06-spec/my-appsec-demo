@@ -1,23 +1,22 @@
 stages:
-  - security
+  - test
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 sast:
-  stage: security
-  script:
-    - echo "Running SAST check"
-    - semgrep --config=auto .
-  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-secrets:
-  stage: security
-  script:
-    - echo "Running secret detection"
-    - gitleaks detect --source=. -v
-  allow_failure: true
+secret_detection:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-sca:
-  stage: security
-  script:
-    - echo "Running SCA check"
-    - trivy fs --scanners vuln --severity CRITICAL,HIGH .
-  allow_failure: true
+dependency_scanning:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
