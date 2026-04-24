@@ -1,25 +1,23 @@
 stages:
   - security
 
-semgrep-sast:
+sast:
   stage: security
-  image: returntocorp/semgrep
   script:
-    - semgrep --config=auto . --json --output semgrep_report.json
-  artifacts:
-    paths: [semgrep_report.json]
+    - echo "Running SAST check"
+    - semgrep --config=auto .
   allow_failure: true
 
-gitleaks:
+secrets:
   stage: security
-  image: zricethezav/gitleaks:latest
   script:
+    - echo "Running secret detection"
     - gitleaks detect --source=. -v
   allow_failure: true
 
-trivy-sca:
+sca:
   stage: security
-  image: aquasec/trivy
   script:
+    - echo "Running SCA check"
     - trivy fs --scanners vuln --severity CRITICAL,HIGH .
   allow_failure: true
