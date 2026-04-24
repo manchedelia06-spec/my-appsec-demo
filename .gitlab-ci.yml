@@ -1,0 +1,32 @@
+yaml
+stages:
+  - security
+
+# Этап 1: Semgrep (SAST) — поиск уязвимостей в коде
+semgrep-sast:
+  stage: security
+  image: returntocorp/semgrep
+  script:
+    - semgrep --config=auto . --json --output semgrep_report.json
+  artifacts:
+    paths: [semgrep_report.json]
+  allow_failure: true
+
+# Этап 2: Gitleaks — поиск секретов (паролей, токенов)
+gitleaks:
+  stage: security
+  image: zricethezav/gitleaks:latest
+  script:
+    - gitleaks detect --source=. -v --report-format json --report-path gitleaks-report.json
+  artifacts:
+    paths: [gitleaks-report.json]
+    expire_in: 1 week
+  allow_failure: true
+
+# Этап 3: Trivy (SCA) — проверка зависимостей Python
+trivy-sca:
+  stage: security
+  image: aquasec/trivy
+  script:
+    - trivy fs --scanners vuln --severity CRITICAL,HIGH .
+  allow_failure: true
