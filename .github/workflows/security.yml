@@ -19,6 +19,7 @@ jobs:
             auto
             custom-rules
       - name: Run Gitleaks (Secret Detection)
+        if: always()
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
