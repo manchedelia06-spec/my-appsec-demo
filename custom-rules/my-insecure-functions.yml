@@ -3,9 +3,46 @@ rules:
     pattern: strcpy($DEST, $SRC)
     message: |
       Обнаружен небезопасный вызов strcpy. Потенциальный buffer overflow.
-      Используем strncpy с проверкой длины или переходим на std::string.
+      Используйте strncpy с проверкой длины или перейдите на std::string.
     languages: [c, cpp]
     severity: ERROR
     metadata:
       category: security
       cwe: "CWE-120: Buffer Copy without Checking Size of Input"
+
+  - id: my-custom-gets-detector
+    pattern: gets($BUF)
+    message: |
+      Обнаружен вызов gets(). Эта функция никогда не проверяет размер буфера
+      и является классической причиной переполнения стека.
+      Используйте fgets().
+    languages: [c, cpp]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: "CWE-242: Use of Inherently Dangerous Function"
+
+  - id: my-custom-sprintf-detector
+    pattern: sprintf($DEST, ...)
+    message: |
+      Обнаружен вызов sprintf(). Риск переполнения буфера.
+      Используйте snprintf() с указанием максимального размера.
+    languages: [c, cpp]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: "CWE-120: Buffer Copy without Checking Size of Input (variant)"
+
+  - id: my-custom-scanf-string-detector
+    pattern: |
+      scanf($FORMAT, ...)
+    pattern-regex: scanf\s*\(\s*"%s"
+    message: |
+      Обнаружен вызов scanf с форматным спецификатором %s без ограничения длины.
+      Это может привести к переполнению буфера.
+      Используйте fgets() или укажите максимальную длину, например "%10s".
+    languages: [c, cpp]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: "CWE-120: Buffer Copy without Checking Size of Input (via scanf)"
