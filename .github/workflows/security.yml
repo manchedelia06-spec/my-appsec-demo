@@ -23,6 +23,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Trivy (SCA)
+        if: always() # <-- будет работать, несмотря на падение на предыдущих шагах
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
