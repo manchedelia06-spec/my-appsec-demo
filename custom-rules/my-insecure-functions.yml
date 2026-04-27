@@ -34,8 +34,6 @@ rules:
       cwe: "CWE-120: Buffer Copy without Checking Size of Input (variant)"
 
   - id: my-custom-scanf-string-detector
-    pattern: |
-      scanf($FORMAT, ...)
     pattern-regex: scanf\s*\(\s*"%s"
     message: |
       Обнаружен вызов scanf с форматным спецификатором %s без ограничения длины.
@@ -46,3 +44,5 @@ rules:
     metadata:
       category: security
       cwe: "CWE-120: Buffer Copy without Checking Size of Input (via scanf)"
+
+
