@@ -1,0 +1,11 @@
+rules:
+  - id: my-custom-strcpy-detector
+    pattern: strcpy($DEST, $SRC)
+    message: |
+      Обнаружен небезопасный вызов strcpy. Потенциальный buffer overflow.
+      Используем strncpy с проверкой длины или переходим на std::string.
+    languages: [c, cpp]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: "CWE-120: Buffer Copy without Checking Size of Input"
